@@ -1,0 +1,165 @@
+﻿Updating SVN Code to prevent window creation
+
+Console.Write("Preventing SVN window creation...");
+SVN.StartInfo.CreateNoWindow = true;
+Console.Write(" Done\n");
+Console.Write("Redirecting SVN Output...");
+SVN.StartInfo.RedirectStandardOutput = true;
+Console.Write(" Done\n");
+Console.Write("Stopping SVN shell execution...");
+SVN.StartInfo.UseShellExecute = false;
+Console.Write(" Done\n");
+
+This code was used to do the same for the TFS executable
+
+Console.Write("Preventing window creation...");
+TFS.StartInfo.CreateNoWindow = true;
+Console.Write(" Done\n");
+Console.Write("Redirecting Output...");
+TFS.StartInfo.RedirectStandardOutput = true;
+Console.Write(" Done\n");
+Console.Write("Stopping shell execution...");
+TFS.StartInfo.UseShellExecute = false;
+Console.Write(" Done\n");
+
+
+
+This code was in place before using the BatchFiles.dat to load the batch files:
+
+            string[] files = new string[4];
+            files[0] = bat_ItemUpdate;
+            files[1] = bat_CreatureUpdate;
+            files[2] = bat_MapUpdate;
+            files[3] = bat_SpellUpdate;
+            
+            CheckFiles(files);
+
+			
+        public static void CheckFiles(string[] files)
+        {
+            foreach (string file in files)
+            {
+                if (!File.Exists(file))
+                {
+                    Console.WriteLine("Could not find file: " + file + ". Feature disabled.");
+                }
+            }
+        }
+
+		        switch (message[1])
+                {
+                    case "restart":
+                        RestartServer();
+                        break;
+                    case "update":
+                        UpdateSVN();
+                        break;
+                    case "stop":
+                        StopServer();
+                        break;
+                    case "start":
+                        RunTFS();
+                        break;
+                    case "creatures":
+                        UpdateCreatures();
+                        break;
+                    case "spells":
+                        UpdateSpells();
+                        break;
+                    case "items":
+                        UpdateItems();
+                        break;
+                }
+
+		private static void UpdateSpells()
+        {
+            try
+            {
+                //Initialise the SVN Update process
+                Console.Write("Initialising SVN Update...");
+                svn_map.StartInfo.FileName = bat_SpellUpdate;
+                Console.Write(" Done\n");
+                // Launch the process
+                Console.Write("Launching SVN Update...");
+                svn_spells.Start();
+                Console.Write(" Done\n");
+            }
+            catch (Exception ex)
+            {
+                Console.Write(" Failed \nSVN Update Failed: " + ex.Message + "\n");
+                Console.Read();
+            }
+        }
+
+        private static void UpdateCreatures()
+        {
+            try
+            {
+                //Initialise the SVN Update process
+                Console.Write("Initialising SVN Update...");
+                svn_map.StartInfo.FileName = bat_CreatureUpdate;
+                Console.Write(" Done\n");
+                // Launch the process
+                Console.Write("Launching SVN Update...");
+                svn_creatures.Start();
+                Console.Write(" Done\n");
+            }
+            catch (Exception ex)
+            {
+                Console.Write(" Failed \nSVN Update Failed: " + ex.Message + "\n");
+                Console.Read();
+            }
+        }
+
+        static void UpdateSVN()
+        {
+            try
+            {
+                //Initialise the SVN Update process
+                Console.Write("Initialising SVN Update...");
+                svn_map.StartInfo.FileName = bat_MapUpdate;
+                Console.Write(" Done\n");
+                // Launch the process
+                Console.Write("Launching SVN Update...");
+                svn_map.Start();
+                Console.Write(" Done\n");
+            }
+            catch (Exception ex)
+            {
+                Console.Write(" Failed \nSVN Update Failed: " + ex.Message + "\n");
+                Console.Read();
+            }
+        }
+
+        private static void UpdateItems()
+        {
+            try
+            {
+                //Initialise the SVN Update process
+                Console.Write("Initialising SVN Update...");
+                svn_map.StartInfo.FileName = bat_ItemUpdate;
+                Console.Write(" Done\n");
+                // Launch the process
+                Console.Write("Launching SVN Update...");
+                svn_items.Start();
+                Console.Write(" Done\n");
+            }
+            catch (Exception ex)
+            {
+                Console.Write(" Failed \nSVN Update Failed: " + ex.Message + "\n");
+                Console.Read();
+            }
+        }
+
+		
+
+The declarations of each of the bats from before the big changes.
+        // Batch and Process objects for the SVN updates
+        static string bat_MapUpdate = "update.bat";
+        public static Process svn_map = new Process();
+        static string bat_SpellUpdate = "spells.bat";
+        public static Process svn_spells = new Process();
+        static string bat_ItemUpdate = "items.bat";
+        public static Process svn_items = new Process();
+        static string bat_CreatureUpdate = "creatures.bat";
+        public static Process svn_creatures = new Process();

@@ -1,0 +1,46 @@
+This program is designed to allow a user to update and control an OT server remotely without having to have access to the server directly.
+In order to run it, you'll need some basic ability to modify C# code, a basic knowledge of the Visual Studio 2012 IDE, and a small amount of time.
+To add a new function to the updater, you must create an SVN repository, this can be done by using VisualSVN, following the tutorials provided with that software.
+When you add an SVN directory, check it out directly into the data directory replacing the folder you are checking out (e.g data/world), so the subversion specific
+files will come directlry into the directory of each data folder. Once you have created your SVN directory, you must add a batch file. The batch file generally
+looks a bit like this:
+
+		cd data
+		TortoiseProc.exe /path:world /command:update /closeonend:1
+
+The first line sets the current directory to the data folder, the second line calls a function of TortoiseProc.exe (a TortoiseSVN file, you NEED TortoiseSVN)
+the path is the name of the directory you wish to update (e.g world, spells, items, xml, etc). closeonend closes the TortoiseSVN GUI after it's completed the job
+of updating the repository. Name the batch file with something relevant, and put it in the directory with the server exe itself. Remember the file name, you'll 
+need it later.
+
+That's the SVN shit dealt with, so now you will need to add a button to the MainWindow.xaml form using VS2012. This is pretty simple, just make the form bigger,
+add a button, and set the text of the button to the name of the function, then double click on the button and in the void which is created, put this code:
+
+		try
+		{
+			_buffer = Encoding.ASCII.GetBytes("User: _FUNCTIONNAME_");
+			_clientSocket.BeginSend(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(SendCallback), null);
+		}
+		catch (SocketException) { MessageBox.Show("Server closed connection."); } // Server closed connection
+		catch (Exception ex)
+		{
+			MessageBox.Show(ex.Message, "Error!");
+			UpdateControlStates(false);
+		}
+
+Once you've added that, change _FUNCTIONNAME_ (remove the underscores, to) to a name which is relevant, for instance world, items, spells, etc... Remember what
+you set it to, as you will need it for the next step.
+
+At this point, all of the code itself is dealt with, and all you now need to do is modify batchfiles.dat. The format for the file is CSV:
+
+	_BAT_FILE_NAME_.bat,_COMMAND_
+	_BAT_FILE_NAME_.bat,_COMMAND_
+
+Now replace _BAT_FILE_NAME_ with the name of the batch file, and _COMMAND_ with the command you added the last time you were editing code. Now you should have:
+
+A .bat file which updates the server files.
+A function in the client which sends the command to the server.
+An entry in the batch file list matching the command to the file.
+
+These are the only three things you must change to add a new batch file, and it should be rather simple for most users. If you encounter any difficulties post
+in the forum where you found this software (probably OTLand or TPForums) and I will respond as and when I can.
